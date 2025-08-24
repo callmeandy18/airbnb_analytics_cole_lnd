@@ -1,0 +1,85 @@
+version: 2
+
+models:
+  - name: dim_host
+    description: "Host dimension"
+    columns:
+      - name: host_id
+        tests: [not_null, unique]
+      - name: host_name
+        tests:
+          - not_null
+          - dbt_utils.length:
+              min: 2
+      - name: is_superhost
+        tests:
+          - not_null
+          - accepted_values:
+              values: [true, false]
+
+  - name: dim_listing
+    description: "Listing dimension"
+    columns:
+      - name: listing_id
+        tests: [not_null, unique]
+      - name: listing_name
+        tests:
+          - not_null
+          - dbt_utils.length:
+              min: 5
+      - name: room_type
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['Entire home/apt','Private room','Shared room','Hotel room']
+      - name: minimum_nights
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "minimum_nights >= 1"
+      - name: price
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "price > 0"
+      - name: host_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_host')
+              field: host_id
+
+  - name: fact_reviews
+    description: "One row per review"
+    columns:
+      - name: review_id
+        tests: [not_null, unique]
+      - name: listing_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_listing')
+              field: listing_id
+      - name: host_id
+        tests:
+          - not_null
+          - relationships:
+              to: ref('dim_host')
+              field: host_id
+      - name: review_date
+        tests:
+          - not_null
+          - dbt_utils.expression_is_true:
+              expression: "review_date >= '2000-01-01'"
+          - no_future_dates
+      - name: reviewer_name
+        tests:
+          - not_null
+          - dbt_utils.length:
+              min: 2
+              max: 100
+      - name: sentiment
+        tests:
+          - not_null
+          - accepted_values:
+              values: ['positive','neutral','negative']

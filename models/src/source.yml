@@ -1,0 +1,52 @@
+version: 2
+
+sources:
+  - name: airbnb
+    schema: airbnb
+    tables:
+      - name: listings
+        description: "Contains property listings"
+        columns:
+          - name: listing_id
+            description: "PK"
+            tests: 
+              - [not_null, unique]
+              - relationsips:
+                to: sources('airbnb','reviews')
+                field: listing_id
+          - name: listing_url
+          - name: name
+          - name: room_type
+          - name: minimun_nights
+          - name: host_id
+          - name: price
+          - name: created_at
+          - name: updated_at
+
+      - name: hosts
+        description: "Information about property owners"
+        columns:
+          - name: host_id
+            description: "PK"
+            tests: 
+              - [not_null, unique]
+              - relationsips:
+                to: sources('airbnb','listings')
+                field: host_id         
+          - name: name
+          - name: is_superhost
+          - name: created_at
+          - name: updated_at
+
+      - name: reviews
+        description: "Guest reviews for listings"
+        columns:
+          - name: review_id
+            description: "PK"
+            tests: [not_null, unique]          
+          - name: listing_id
+          - name: date
+          - name: reviewer_name
+          - name: comments
+          - name: sentiment
+      
