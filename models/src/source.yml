@@ -7,13 +7,11 @@ sources:
       - name: listings
         description: "Contains property listings"
         columns:
-          - name: listing_id
+          - name: id
             description: "PK"
             tests: 
-              - [not_null, unique]
-              - relationsips:
-                to: sources('airbnb','reviews')
-                field: listing_id
+              - not_null
+              - unique
           - name: listing_url
           - name: name
           - name: room_type
@@ -26,13 +24,11 @@ sources:
       - name: hosts
         description: "Information about property owners"
         columns:
-          - name: host_id
+          - name: id
             description: "PK"
             tests: 
-              - [not_null, unique]
-              - relationsips:
-                to: sources('airbnb','listings')
-                field: host_id         
+              - not_null
+              - unique       
           - name: name
           - name: is_superhost
           - name: created_at
@@ -43,10 +39,23 @@ sources:
         columns:
           - name: review_id
             description: "PK"
-            tests: [not_null, unique]          
+            tests: 
+            - not_null
+            - unique          
           - name: listing_id
+            tests:
+            - relationships:
+                to: source('airbnb','listings')
+                field: id
           - name: date
           - name: reviewer_name
           - name: comments
           - name: sentiment
-      
+
+      - name: dim_date
+        description: "Date dimension loaded via dbt seed"
+        columns:
+          - name: date_id
+            tests:
+              - not_null
+              - unique
