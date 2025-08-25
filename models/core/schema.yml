@@ -3,15 +3,16 @@ version: 2
 models:
   - name: dim_host
     description: "Host dimension"
+    tests: 
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "char_length(host_name) >= 2"
     columns:
       - name: host_id
         tests: [not_null, unique]
       - name: host_name
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              arguments:
-                expression: "char_length(host_name) >= 2" 
       - name: is_superhost
         tests:
           - not_null
@@ -20,15 +21,16 @@ models:
 
   - name: dim_listing
     description: "Listing dimension"
+    tests: 
+        - dbt_utils.expression_is_true:
+            arguments:
+              expression: "char_length(listing_name) >= 5"
     columns:
       - name: listing_id
         tests: [not_null, unique]
       - name: listing_name
         tests:
           - not_null
-          - dbt_utils.expression_is_true:
-              arguments:
-                expression: "char_length(listing_id) >= 5"
       - name: room_type
         tests:
           - not_null
@@ -55,6 +57,10 @@ models:
 
   - name: fact_reviews
     description: "One row per review"
+    tests:
+      - dbt_utils.expression_is_true:
+          arguments:
+            expression: "char_length(reviewer_name) between 2 and 100"
     columns:
       - name: review_id
         tests: [not_null, unique]
@@ -78,10 +84,6 @@ models:
                 expression: ">= cast('{{ var(\"min_review_date\", \"2000-01-01\") }}' as date)"
           - no_future_dates
       - name: reviewer_name
-        tests:
-          - dbt_utils.expression_is_true:
-              arguments:
-                expression: "char_length(reviewer_name) between 2 and 100"
       - name: sentiment
         tests:
           - not_null
