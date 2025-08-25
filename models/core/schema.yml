@@ -17,7 +17,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: [true, false]
+              arguments:
+                values: [true, false]
 
   - name: dim_listing
     description: "Listing dimension"
@@ -35,7 +36,8 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['Entire home/apt','Private room','Shared room','Hotel room']
+              arguments:
+                values: ['Entire home/apt','Private room','Shared room','Hotel room']
       - name: minimum_nights
         tests:
           - not_null
@@ -88,4 +90,5 @@ models:
         tests:
           - not_null
           - accepted_values:
-              values: ['positive','neutral','negative']
+              arguments:
+                values: ['positive','neutral','negative']

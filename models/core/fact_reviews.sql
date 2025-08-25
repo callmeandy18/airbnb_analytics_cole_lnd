@@ -56,7 +56,7 @@ flt as (
     d.date_id as date_key
   from delta f
   join {{ ref('dim_listing') }} l on l.listing_id = f.listing_id
-  join {{ source('airbnb','dim_date') }} d on d.date = f.review_date
+  join {{ ref('dim_date') }} d on d.date = f.review_date
 )
 
 select * from with_dims
