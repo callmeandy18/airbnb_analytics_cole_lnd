@@ -9,7 +9,9 @@ models:
             expression: "char_length(host_name) >= 2"
     columns:
       - name: host_id
-        tests: [not_null, unique]
+        tests: 
+          - not_null
+          - unique
       - name: host_name
         tests:
           - not_null
@@ -28,7 +30,9 @@ models:
               expression: "char_length(listing_name) >= 5"
     columns:
       - name: listing_id
-        tests: [not_null, unique]
+        tests: 
+          - not_null
+          - unique
       - name: listing_name
         tests:
           - not_null
@@ -65,7 +69,9 @@ models:
             expression: "char_length(reviewer_name) between 2 and 100"
     columns:
       - name: review_id
-        tests: [not_null, unique]
+        tests: 
+          - not_null
+          - unique
       - name: listing_id
         tests:
           - not_null
