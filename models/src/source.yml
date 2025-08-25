@@ -2,69 +2,78 @@ version: 2
 
 sources:
   - name: airbnb
-    description: "Raw Airbnb tables loaded from source system."
+    schema: airbnb
     tables:
-      - name: hosts
-        description: "Source table containing host metadata."
-        columns:
-          - name: host_id
-            description: "Unique ID for each host."
-            tests: 
-              - not_null
-              - unique
-          - name: host_name
-            description: "Full name of the host."
-            tests: 
-              - not_null
       - name: listings
-        description: "Source table containing listing metadata."
+        description: "One row per property listings"
         columns:
-          - name: listing_id
-            description: "Unique ID for each listing."
+          - name: id
+            description: "PK"
             tests: 
               - not_null
               - unique
-          - name: listing_name
-            description: "Title or name of the listing."
-            tests: 
-              - not_null
+          - name: listing_url
+            description: "URL of the listing"
+          - name: name
+            description: "Listing title"
           - name: room_type
-            description: "Type of room offered (e.g. Entire home, Private room)."
-            tests: 
-              - not_null
-          - name: minimum_nights
-            description: "Minimum number of nights required for booking."
-            tests: 
-              - not_null
+            description: "Type of room offered"
+          - name: minimun_nights
+            description: "Minimum nights required"
+          - name: host_id
+            description: "FK to hosts.id"
           - name: price
-            description: "Listing price per night in default currency."
+            description: "Nightly price"
+          - name: created_at
+            description: "Record creation timestamp"
+          - name: updated_at
+            description: "Record update timestamp"
+
+      - name: hosts
+        description: "Information about property owners"
+        columns:
+          - name: id
+            description: "PK"
             tests: 
               - not_null
+              - unique       
+          - name: name
+            description: "Host display name"
+          - name: is_superhost
+            description: "Whether the host is a superhost"
+          - name: created_at
+            description: "Record creation timestamp"
+          - name: updated_at
+            description: "Record update timestamp"
+
       - name: reviews
-        description: "Source table containing review data."
+        description: "Guest reviews for listings"
         columns:
           - name: review_id
-            description: "Unique ID for each review."
+            description: "PK"
             tests: 
+            - not_null
+            - unique          
+          - name: listing_id
+            description: "FK to listings.id"
+            tests:
+            - relationships:
+                to: source('airbnb','listings')
+                field: id
+          - name: date
+            description: "Review date"
+          - name: reviewer_name
+            description: "Reviewer name"
+          - name: comments
+            description: "Review comments"
+          - name: sentiment
+            description: "Sentiment label"
+
+      - name: dim_date
+        description: "Date dimension loaded via dbt seed"
+        columns:
+          - name: date_id
+            description: "FK"
+            tests:
               - not_null
               - unique
-          - name: listing_id
-            description: "ID of listing being reviewed."
-            tests: 
-              - not_null
-          - name: host_id
-            description: "ID of the host being reviewed."
-            tests: 
-              - not_null
-          - name: review_date
-            description: "Date when the review was posted."
-            tests: 
-              - not_null
-          - name: reviewer_name
-            description: "Name of the person who gave the review."
-            tests: 
-              - not_null
-          - name: sentiment
-            description: "Sentiment category of the review text."
-            tests: 
-              - not_null
