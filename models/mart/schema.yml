@@ -2,28 +2,32 @@ version: 2
 
 models:
   - name: agg_daily_reviews
-    description: "Daily sentiment per date"
+    description: "Daily average sentiment aggregated per date"
     tests:
       - dbt_utils.expression_is_true:
           expression: "avg_sentiment between -1 and 1"
     columns:
       - name: date_key
+        description: "Date for aggregation"
         tests:
           - not_null
           - unique
       - name: avg_sentiment
+        description: "Avereage sentiment score for the day"
 
   - name: agg_reviews_by_listing
-    description: "Review counts per listing"
+    description: "Aggregated review counts per listing"
     tests:
       - dbt_utils.expression_is_true:
           expression: "review_count >= 0"
     columns:
       - name: listing_id
+        description: "FK"
         tests:
           - not_null
           - unique
       - name: review_count
+        description: "Total number of reviews per listing"
 
   - name: agg_room_type_trends
     description: "Average price by room type"
@@ -32,19 +36,23 @@ models:
           expression: "avg_price >= 0"
     columns:
       - name: room_type
+        description: "Type of room (e.g., Entire room, Private room)."
         tests:
           - not_null
           - unique
       - name: avg_price
+        description: "Average nightly price for the room type."
 
   - name: agg_host_performance
     description: "Host-level KPIs"
     columns:
       - name: host_id
+        description: "PK"
         tests:
           - not_null
           - unique
       - name: avg_price_per_listing
+        description: "Average price across the host's listing"
         tests:
           - dbt_utils.expression_is_true:
               expression: ">= 0"

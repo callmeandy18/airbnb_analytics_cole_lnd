@@ -1,0 +1,15 @@
+version: 2
+
+exposures:
+  - name: host_performance_dashboard
+    label: "Host Performance Dashboard"
+    type: dashboard
+    description: "Dashboard displaying host-level performance metrics, such as avg_price_per_listing."
+    url: "https://bi.tools.company.com/host_performance"
+    maturity: high
+    owner:
+      name: Analytics Team
+      email: analytics@company.com
+    depends_on:
+      - ref('agg_host_performance')
+      - ref('agg_reviews_by_listing')
