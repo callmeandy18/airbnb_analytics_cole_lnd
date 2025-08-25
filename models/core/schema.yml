@@ -9,9 +9,9 @@ models:
       - name: host_name
         tests:
           - not_null
-          - dbt_utils.length:
+          - dbt_utils.expression_is_true:
               arguments:
-                min: 2
+                expression: "char_length(host_name) >= 2" 
       - name: is_superhost
         tests:
           - not_null
@@ -26,9 +26,9 @@ models:
       - name: listing_name
         tests:
           - not_null
-          - dbt_utils.length:
+          - dbt_utils.expression_is_true:
               arguments:
-                min: 5
+                expression: "char_length(listing_id) >= 5"
       - name: room_type
         tests:
           - not_null
@@ -79,10 +79,9 @@ models:
           - no_future_dates
       - name: reviewer_name
         tests:
-          - dbt_utils.length:
+          - dbt_utils.expression_is_true:
               arguments:
-                min: 2
-                max: 100
+                expression: "char_length(reviewer_name) between 2 and 100"
       - name: sentiment
         tests:
           - not_null
