@@ -47,7 +47,7 @@ sources:
             - relationships:
                 to: source('airbnb','listings')
                 field: id
-          - name: date
+          - name: review_date
           - name: reviewer_name
           - name: comments
           - name: sentiment

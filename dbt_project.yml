@@ -7,17 +7,17 @@ version: '1.0.0'
 config-version: 2
 
 # This setting configures which "profile" dbt uses for this project.
-profile: airbnb_analytics_dbt
+# profile: airbnb_analytics_dbt
 
 # These configurations specify where dbt should look for different types of files.
 # The `model-paths` config, for example, states that models in this project can be
 # found in the "models/" directory. You probably won't need to change these!
 model-paths: ["models"]
-analysis-paths: ["analyses"]
-test-paths: ["tests"]
 seed-paths: ["seeds"]
 macro-paths: ["macros"]
-snapshot-paths: ["snapshots"]
+# analysis-paths: ["analyses"]
+# test-paths: ["tests"]
+# snapshot-paths: ["snapshots"]
 
 vars:
   min_review_date: "2000-01-01"
@@ -40,8 +40,8 @@ clean-targets:         # directories to be removed by `dbt clean`
 
 models:
   airbnb_analytics_dbt:
-    src:
-      +schema: airbnb       
+    # src:
+    #  +schema: airbnb       
     core:
       +schema: core
       +materialized: incremental

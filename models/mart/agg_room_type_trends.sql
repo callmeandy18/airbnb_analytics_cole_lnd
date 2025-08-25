@@ -1,5 +1,4 @@
 {{ config(materialized='table') }}
-
 select
   dl.room_type,
   count(*) as total_listings,

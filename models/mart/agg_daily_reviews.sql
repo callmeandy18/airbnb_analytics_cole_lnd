@@ -1,5 +1,4 @@
 {{ config(materialized='table') }}
-
 select
   fr.date_key,
   count(fr.review_id) as review_count,

@@ -1,5 +1,4 @@
 {{ config(materialized='table') }}
-
 select
   fr.listing_id,
   count(fr.review_id) as review_count,

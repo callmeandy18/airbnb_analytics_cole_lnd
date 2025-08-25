@@ -1,14 +1,12 @@
-{{ 
-    config(materialized='incremental') 
-}}
+{{ config(materialized='incremental', unique_key='host_id') }}
 
 with src as (
   select
-    id::bigint                      as host_id,
-    nullif(trim(name),'')           as host_name,
-    coalesce(is_superhost,false)    as is_superhost,
-    created_at::timestamp           as created_at,
-    updated_at::timestamp           as updated_at
+    id::bigint                    as host_id,
+    nullif(trim(name),'')         as host_name,
+    coalesce(is_superhost,false)  as is_superhost,
+    created_at::timestamp         as created_at,
+    updated_at::timestamp         as updated_at
   from {{ source('airbnb','hosts') }}
   where id is not null
 )
@@ -24,6 +22,5 @@ cross join watermark w
 where s.updated_at is not null
   and s.updated_at > w.mx
 {% else %}
-select *
-from src
+select * from src
 {% endif %}

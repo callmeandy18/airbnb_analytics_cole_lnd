@@ -1,12 +1,16 @@
-{{ config(materialized='incremental', unique_key='review_id') }}
+{{ config(
+  materialized='incremental',
+  unique_key='review_id',
+  incremental_strategy='delete+insert'
+) }}
 
 with src as (
   select
-    review_id::bigint        as review_id,
-    listing_id::bigint       as listing_id,
-    review_date::date        as review_date,
-    nullif(trim(reviewer_name),'') as reviewer_name,
-    lower(nullif(trim(sentiment),'')) as sentiment
+    review_id::bigint                  as review_id,
+    listing_id::bigint                 as listing_id,
+    review_date::date                  as review_date,
+    nullif(trim(reviewer_name),'')     as reviewer_name,
+    lower(nullif(trim(sentiment),''))  as sentiment
   from {{ source('airbnb','reviews') }}
   where review_id is not null
 ),
@@ -20,9 +24,28 @@ flt as (
     and reviewer_name is not null
     and length(reviewer_name) between 2 and 100
     and sentiment in ('positive','neutral','negative')
-),
+)
 
-with_dims as (
+{% if is_incremental() %}
+, watermark as (
+  -- Lấy watermark theo thời gian
+  select coalesce(max(review_date), '1900-01-01'::date) as mx_date
+  from {{ this }}
+)
+
+, delta as (
+  select f.*
+  from flt f
+  join watermark w on true
+  where f.review_date > w.mx_date
+)
+{% else %}
+, delta as (
+  select * from flt
+)
+{% endif %}
+
+, with_dims as (
   select
     f.review_id,
     l.listing_id,
@@ -31,14 +54,9 @@ with_dims as (
     f.sentiment,
     f.reviewer_name,
     d.date_id as date_key
-  from flt f
+  from delta f
   join {{ ref('dim_listing') }} l on l.listing_id = f.listing_id
   join {{ source('airbnb','dim_date') }} d on d.date = f.review_date
 )
 
-select *
-from with_dims
-
-{% if is_incremental() %}
-  where review_id not in (select review_id from {{ this }})
-{% endif %}
+select * from with_dims
