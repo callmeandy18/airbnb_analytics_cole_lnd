@@ -62,8 +62,8 @@ models:
     columns:
       - name: review_id
         tests: 
-        - not_null
-        - unique
+          - not_null
+          - unique
       - name: listing_id
         tests:
           - not_null
@@ -81,7 +81,7 @@ models:
           - not_null
           - dbt_utils.expression_is_true:
               arguments:
-                expression: "review_date >= '2000-01-01'"
+                expression: "review_date >= cast('{{ var(\"min_review_date\", \"2000-01-01\") }}' as date)"
           - no_future_dates
       - name: reviewer_name
         tests:
